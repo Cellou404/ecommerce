@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Category, Product
+from .models import Category, Product, ProductVariation
 from django.db.models import Q
 
 # Create your views here.
@@ -52,7 +52,25 @@ def product_list(request, category_slug=None):
 def product_detail(request, category_slug, slug):
     category = get_object_or_404(Category, slug=category_slug)
     product = get_object_or_404(Product, slug=slug, available=True)
+    
+    # Get all variations for the product
+    variations = product.variations.all()
+    
+    # Group variations by color and size
+    color_variations = set(variations.values_list('color', flat=True).distinct())
+    size_variations = set(variations.values_list('size', flat=True).distinct())
+    
+    # Remove None from variations if present
+    color_variations = {c for c in color_variations if c is not None}
+    size_variations = {s for s in size_variations if s is not None}
+    
     return render(request,
         'products/detail.html',
-        {'category': category, 'product': product,}
+        {
+            'category': category, 
+            'product': product,
+            'variations': variations,
+            'color_variations': color_variations,
+            'size_variations': size_variations,
+        }
     )

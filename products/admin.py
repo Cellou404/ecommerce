@@ -1,6 +1,6 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin
-from .models import Category, Product
+from .models import Category, Product, ProductVariation
 
 # Register your models here.
 
@@ -39,3 +39,9 @@ class ProductAdmin(ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+@admin.register(ProductVariation)
+class ProductVariationAdmin(ModelAdmin):
+    list_display = ['product', 'color', 'size', 'stock_quantity', 'price_override']
+    list_filter = ['product', 'color', 'size']
+    search_fields = ['product__name', 'color', 'size']
