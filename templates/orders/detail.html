@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Order #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Order Header -->
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Order #{{ order.id }}</h1>
+        <div class="text-right">
+            <p class="text-sm text-gray-500">Placed on {{ order.created_at|date:"F j, Y" }}</p>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {% if order.paid %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                {% if order.paid %}Paid{% else %}Pending Payment{% endif %}
+            </span>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Order Items -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Order Items</h2>
+                    <div class="divide-y divide-gray-200">
+                        {% for item in order.items.all %}
+                            <div class="py-4 flex items-center">
+                                <div class="flex-shrink-0 w-24 h-24">
+                                    {% if item.product.image %}
+                                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-full h-full object-cover rounded">
+                                    {% endif %}
+                                </div>
+                                <div class="ml-6 flex-1">
+                                    <div class="flex justify-between">
+                                        <div>
+                                            <h3 class="text-base font-medium text-gray-900">
+                                                {{ item.product.name }}
+                                            </h3>
+                                            <p class="mt-1 text-sm text-gray-500">
+                                                Quantity: {{ item.quantity }}
+                                            </p>
+                                        </div>
+                                        <p class="text-sm font-medium text-gray-900">
+                                            ${{ item.price }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <!-- Order Summary -->
+                <div class="bg-gray-50 p-6">
+                    <div class="flex justify-between text-base font-medium text-gray-900">
+                        <p>Total</p>
+                        <p>${{ order.total_price }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shipping Information -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Shipping Information</h2>
+                <dl class="divide-y divide-gray-200">
+                    <div class="py-3">
+                        <dt class="text-sm font-medium text-gray-500">Name</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ order.first_name }} {{ order.last_name }}</dd>
+                    </div>
+                    <div class="py-3">
+                        <dt class="text-sm font-medium text-gray-500">Email</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ order.email }}</dd>
+                    </div>
+                    <div class="py-3">
+                        <dt class="text-sm font-medium text-gray-500">Shipping Address</dt>
+                        <dd class="mt-1 text-sm text-gray-900">
+                            {{ order.address }}<br>
+                            {{ order.city }}, {{ order.postal_code }}
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+
+            <!-- Actions -->
+            <div class="mt-6">
+                <a href="{% url 'orders:order_list' %}" class="block w-full bg-purple-600 text-white text-center px-4 py-2 rounded-md hover:bg-purple-700">
+                    Back to Orders
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

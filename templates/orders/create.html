@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Order Form -->
+        <div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Shipping Information</h2>
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div>
+                            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                                {{ field.label }}
+                            </label>
+                            <div class="mt-1">
+                                {{ field }}
+                            </div>
+                            {% if field.errors %}
+                                {% for error in field.errors %}
+                                    <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <div class="mt-6">
+                        <button type="submit" class="w-full bg-purple-600 text-white px-6 py-3 rounded-md hover:bg-purple-700">
+                            Place Order
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Order Summary</h2>
+                <div class="flow-root">
+                    <ul class="-my-4 divide-y divide-gray-200">
+                        {% for item in cart.items.all %}
+                            <li class="flex py-4">
+                                <div class="flex-shrink-0">
+                                    {% if item.product.image %}
+                                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-16 h-16 rounded object-center object-cover">
+                                    {% endif %}
+                                </div>
+                                <div class="ml-4 flex-1">
+                                    <div class="flex justify-between">
+                                        <div>
+                                            <h3 class="text-sm font-medium text-gray-900">
+                                                {{ item.product.name }}
+                                            </h3>
+                                            <p class="mt-1 text-sm text-gray-500">Quantity: {{ item.quantity }}</p>
+                                        </div>
+                                        <p class="text-sm font-medium text-gray-900">${{ item.total_price }}</p>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="border-t border-gray-200 mt-6 pt-6">
+                    <div class="flex justify-between text-base font-medium text-gray-900">
+                        <p>Subtotal</p>
+                        <p>${{ cart.get_total_price }}</p>
+                    </div>
+                    <p class="mt-0.5 text-sm text-gray-500">Shipping and taxes will be calculated at the next step.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Style form inputs */
+    input[type="text"],
+    input[type="email"],
+    textarea {
+        @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500;
+    }
+</style>
+{% endblock %}

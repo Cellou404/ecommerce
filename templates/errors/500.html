@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}500 - Server Error{% endblock %}
+
+{% block content %}
+<div class="container min-vh-100 d-flex align-items-center justify-content-center">
+    <div class="text-center">
+        <h1 class="display-1 fw-bold text-danger">500</h1>
+        <div class="mb-4 lead">
+            <span class="text-danger">Oops!</span> Internal Server Error
+        </div>
+        <p class="mb-4">
+            Something went wrong on our end. Please try again later.
+        </p>
+        <div class="mb-4">
+            <img src="https://cdn-icons-png.flaticon.com/512/6195/6195678.png" alt="500 illustration" class="img-fluid" style="max-width: 300px;">
+        </div>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'home' %}" class="btn btn-primary px-4 py-2">
+                <i class="fas fa-home me-2"></i>Return Home
+            </a>
+            <button onclick="window.location.reload()" class="btn btn-outline-primary px-4 py-2">
+                <i class="fas fa-redo me-2"></i>Try Again
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

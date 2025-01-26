@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Shopping Cart{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
+
+    {% if cart.items.exists %}
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <!-- Cart Items -->
+            <div class="divide-y divide-gray-200" id="cart-items">
+                {% for item in cart.items.all %}
+                    {% include "cart/partials/cart_item.html" with item=item %}
+                {% endfor %}
+            </div>
+
+            <!-- Cart Summary -->
+            <div class="bg-gray-50 p-6">
+                <div class="flex justify-between text-base font-medium text-gray-900">
+                    <p>Subtotal</p>
+                    <p id="cart-total" 
+                       hx-get="{% url 'cart:cart_total' %}"
+                       hx-trigger="load, cartUpdate from:body"
+                       hx-swap="innerHTML">
+                        ${{ cart.get_total_price|floatformat:2 }}
+                    </p>
+                </div>
+                <p class="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
+                <div class="mt-6">
+                    <a href="{% url 'orders:order_create' %}" class="flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-purple-600 hover:bg-purple-700">
+                        Checkout
+                    </a>
+                </div>
+                <div class="mt-6 flex justify-center text-center text-sm text-gray-500">
+                    <p>
+                        or
+                        <a href="{% url 'products:product_list' %}" class="text-purple-600 hover:text-purple-500">
+                            Continue Shopping
+                            <span aria-hidden="true"> &rarr;</span>
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="text-center py-12">
+            <p class="text-lg text-gray-500">Your cart is empty</p>
+            <div class="mt-6">
+                <a href="{% url 'products:product_list' %}" class="text-purple-600 hover:text-purple-500">
+                    Continue Shopping
+                    <span aria-hidden="true"> &rarr;</span>
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+{% block extra_js %}
+<script>
+    document.body.addEventListener('htmx:afterSwap', function(evt) {
+        if (evt.detail.target.id.startsWith('cart-item-')) {
+            Alpine.evaluate(document.querySelector('[x-data]'), 'updateCartTotal()');
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

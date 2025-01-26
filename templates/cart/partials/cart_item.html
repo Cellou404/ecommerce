@@ -1,0 +1,51 @@
+{% load static %}
+
+<div id="cart-item-{{ item.id }}" class="flex py-6 px-6">
+    <div class="flex-shrink-0">
+        {% if item.product.image %}
+            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-16 h-16 rounded object-center object-cover">
+        {% endif %}
+    </div>
+    <div class="ml-4 flex-1">
+        <div class="flex justify-between">
+            <div>
+                <h3 class="text-sm font-medium text-gray-900">
+                    <a href="{% url 'products:product_detail' item.product.category.slug item.product.slug %}" class="hover:text-purple-600">
+                        {{ item.product.name }}
+                    </a>
+                </h3>
+                <p class="mt-1 text-sm text-gray-500">Price: ${{ item.product.price }}</p>
+            </div>
+
+            <!-- Quantity Controls -->
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center border rounded-md">
+                    <form hx-post="{% url 'cart:cart_update_quantity' item.id %}"
+                          hx-target="#cart-item-{{ item.id }}"
+                          hx-swap="outerHTML"
+                          class="flex items-center">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="decrement">
+                        <button type="submit" 
+                                class="px-3 py-1 text-gray-600 hover:text-purple-600 hover:bg-gray-100">
+                            -
+                        </button>
+                    </form>
+                    <span class="px-3 py-1 text-gray-800">{{ item.quantity }}</span>
+                    <form hx-post="{% url 'cart:cart_update_quantity' item.id %}"
+                          hx-target="#cart-item-{{ item.id }}"
+                          hx-swap="outerHTML"
+                          class="flex items-center">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="increment">
+                        <button type="submit"
+                                class="px-3 py-1 text-gray-600 hover:text-purple-600 hover:bg-gray-100">
+                            +
+                        </button>
+                    </form>
+                </div>
+                <p class="text-sm font-medium text-gray-900" data-item-total="{{ item.total_price }}">${{ item.total_price }}</p>
+            </div>
+        </div>
+    </div>
+</div>

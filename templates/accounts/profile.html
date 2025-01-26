@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - {{ user.email }}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
+    <div class="px-6 py-8">
+        <h1 class="text-2xl font-bold text-gray-900 mb-6">Profile</h1>
+        
+        <div class="space-y-6">
+            <div>
+                <h2 class="text-lg font-medium text-gray-900">Account Information</h2>
+                <div class="mt-3 border-t border-gray-200 pt-4">
+                    <dl class="divide-y divide-gray-200">
+                        <div class="py-3 grid grid-cols-3 gap-4">
+                            <dt class="text-sm font-medium text-gray-500">Email</dt>
+                            <dd class="text-sm text-gray-900 col-span-2">{{ user.email }}</dd>
+                        </div>
+                        <div class="py-3 grid grid-cols-3 gap-4">
+                            <dt class="text-sm font-medium text-gray-500">Member since</dt>
+                            <dd class="text-sm text-gray-900 col-span-2">{{ user.date_joined|date:"F j, Y" }}</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-lg font-medium text-gray-900">Recent Orders</h2>
+                <div class="mt-3 border-t border-gray-200 pt-4">
+                    {% if user.orders.exists %}
+                        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+                            <table class="min-w-full divide-y divide-gray-300">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Order ID</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Date</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Total</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 bg-white">
+                                    {% for order in user.orders.all|slice:":5" %}
+                                        <tr>
+                                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900">{{ order.id }}</td>
+                                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ order.created|date:"M d, Y" }}</td>
+                                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">${{ order.total_price }}</td>
+                                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ order.status }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% if user.orders.count > 5 %}
+                            <div class="mt-4 text-center">
+                                <a href="{% url 'orders:order_list' %}" class="text-sm font-medium text-purple-600 hover:text-purple-500">
+                                    View all orders
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <p class="text-sm text-gray-500">No orders yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

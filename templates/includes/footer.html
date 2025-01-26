@@ -1,0 +1,47 @@
+<footer class="bg-white shadow-md mt-auto">
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <!-- Company Info -->
+            <div>
+                <h3 class="text-lg font-semibold mb-4">E-commerce</h3>
+                <p class="text-gray-600">Your one-stop shop for all your needs.</p>
+            </div>
+
+            <!-- Quick Links -->
+            <div>
+                <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                <ul class="space-y-2">
+                    <li><a href="{% url 'home' %}" class="text-gray-600 hover:text-purple-600">Home</a></li>
+                    <li><a href="{% url 'products:product_list' %}" class="text-gray-600 hover:text-purple-600">Products</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-purple-600">About Us</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-purple-600">Contact</a></li>
+                </ul>
+            </div>
+
+            <!-- Customer Service -->
+            <div>
+                <h3 class="text-lg font-semibold mb-4">Customer Service</h3>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-gray-600 hover:text-purple-600">Shipping Policy</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-purple-600">Return Policy</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-purple-600">FAQ</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-purple-600">Privacy Policy</a></li>
+                </ul>
+            </div>
+
+            <!-- Newsletter -->
+            <div>
+                <h3 class="text-lg font-semibold mb-4">Newsletter</h3>
+                <form class="space-y-4">
+                    <input type="email" placeholder="Your email address" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600">
+                    <button type="submit" class="w-full bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700">Subscribe</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="border-t mt-8 pt-8 text-center text-gray-600">
+            <p>&copy; {% now "Y" %} E-commerce. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
