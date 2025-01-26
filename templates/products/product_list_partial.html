@@ -1,0 +1,31 @@
+{% if products %}
+    {% for product in products %}
+        <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+            <a href="{% url 'products:product_detail' product.category.slug product.slug %}">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-48 object-cover">
+                {% endif %}
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold text-gray-900">{{ product.name }}</h3>
+                    <p class="text-sm text-gray-600">{{ product.description|truncatewords:10 }}</p>
+                    <div class="mt-2 flex justify-between items-center">
+                        <span class="text-purple-600 font-bold">${{ product.price }}</span>
+                        <span class="text-sm text-gray-500">{{ product.category.name }}</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="col-span-full text-center py-8">
+        <p class="text-gray-600">
+            {% if category_query %}
+                No products found in the "{{ category_query }}" category.
+            {% elif search_query %}
+                No products match your search for "{{ search_query }}".
+            {% else %}
+                No products available.
+            {% endif %}
+        </p>
+    </div>
+{% endif %}
