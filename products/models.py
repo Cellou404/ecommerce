@@ -48,3 +48,21 @@ class Product(models.Model):
 
     def get_absolute_url(self):
         return reverse('products:product_detail', args=[self.slug])
+
+class ProductVariation(models.Model):
+    product = models.ForeignKey(Product, related_name='variations', on_delete=models.CASCADE)
+    color = models.CharField(max_length=50, null=True, blank=True)
+    size = models.CharField(max_length=20, null=True, blank=True)
+    stock_quantity = models.PositiveIntegerField(default=0)
+    price_override = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    def __str__(self):
+        variation_details = []
+        if self.color:
+            variation_details.append(self.color)
+        if self.size:
+            variation_details.append(self.size)
+        return f"{self.product.name} - {' '.join(variation_details)}"
+
+    class Meta:
+        unique_together = ['product', 'color', 'size']

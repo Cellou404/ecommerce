@@ -35,15 +35,37 @@ def cart_add(request, product_id):
     cart, created = Cart.objects.get_or_create(user=request.user)
     product = get_object_or_404(Product, id=product_id, available=True)
     
-    cart_item, created = CartItem.objects.get_or_create(
+    # Get variation details from form
+    color = request.POST.get('color')
+    size = request.POST.get('size')
+    quantity = int(request.POST.get('quantity', 1))
+    
+    # Find the specific variation
+    variation = product.variations.filter(
+        color=color if color else None, 
+        size=size if size else None
+    ).first()
+    
+    if not variation or variation.stock_quantity < quantity:
+        messages.error(request, 'Selected variation is out of stock.')
+        return redirect(product.get_absolute_url())
+    
+    # Create or update cart item with variation details
+    cart_item, item_created = CartItem.objects.get_or_create(
         cart=cart,
         product=product,
-        defaults={'quantity': 1}
+        color=color,
+        size=size,
+        defaults={'quantity': quantity}
     )
     
-    if not created:
-        cart_item.quantity += 1
+    if not item_created:
+        cart_item.quantity += quantity
         cart_item.save()
+    
+    # Optionally, update the variation's stock
+    variation.stock_quantity -= quantity
+    variation.save()
     
     messages.success(request, f'{product.name} was added to your cart.')
     

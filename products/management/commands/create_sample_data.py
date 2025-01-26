@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.core.files import File
 from django.conf import settings
-from products.models import Category, Product
+from products.models import Category, Product, ProductVariation
 import os
 import shutil
 
@@ -45,6 +45,10 @@ class Command(BaseCommand):
                 'category': 'electronics',
                 'description': 'High-performance laptop with the latest technology.',
                 'price': 1299.99,
+                'variations': [
+                    {'color': 'Silver', 'size': None, 'stock_quantity': 50},
+                    {'color': 'Space Gray', 'size': None, 'stock_quantity': 30}
+                ]
             },
             {
                 'name': 'Wireless Headphones',
@@ -52,6 +56,10 @@ class Command(BaseCommand):
                 'category': 'electronics',
                 'description': 'Premium wireless headphones with noise cancellation.',
                 'price': 199.99,
+                'variations': [
+                    {'color': 'Black', 'size': None, 'stock_quantity': 100},
+                    {'color': 'White', 'size': None, 'stock_quantity': 75}
+                ]
             },
             {
                 'name': 'Cotton T-Shirt',
@@ -59,6 +67,14 @@ class Command(BaseCommand):
                 'category': 'clothing',
                 'description': 'Comfortable 100% cotton t-shirt.',
                 'price': 19.99,
+                'variations': [
+                    {'color': 'White', 'size': 'S', 'stock_quantity': 50},
+                    {'color': 'White', 'size': 'M', 'stock_quantity': 75},
+                    {'color': 'White', 'size': 'L', 'stock_quantity': 60},
+                    {'color': 'Black', 'size': 'S', 'stock_quantity': 40},
+                    {'color': 'Black', 'size': 'M', 'stock_quantity': 65},
+                    {'color': 'Black', 'size': 'L', 'stock_quantity': 55}
+                ]
             },
             {
                 'name': 'Denim Jeans',
@@ -66,6 +82,14 @@ class Command(BaseCommand):
                 'category': 'clothing',
                 'description': 'Classic denim jeans with perfect fit.',
                 'price': 49.99,
+                'variations': [
+                    {'color': 'Blue', 'size': '30', 'stock_quantity': 40},
+                    {'color': 'Blue', 'size': '32', 'stock_quantity': 50},
+                    {'color': 'Blue', 'size': '34', 'stock_quantity': 45},
+                    {'color': 'Black', 'size': '30', 'stock_quantity': 35},
+                    {'color': 'Black', 'size': '32', 'stock_quantity': 45},
+                    {'color': 'Black', 'size': '34', 'stock_quantity': 40}
+                ]
             },
             {
                 'name': 'Python Programming',
@@ -73,6 +97,10 @@ class Command(BaseCommand):
                 'category': 'books',
                 'description': 'Comprehensive guide to Python programming.',
                 'price': 39.99,
+                'variations': [
+                    {'color': None, 'size': 'Paperback', 'stock_quantity': 100},
+                    {'color': None, 'size': 'Hardcover', 'stock_quantity': 50}
+                ]
             },
             {
                 'name': 'Coffee Maker',
@@ -80,11 +108,16 @@ class Command(BaseCommand):
                 'category': 'home-kitchen',
                 'description': 'Automatic coffee maker with timer.',
                 'price': 79.99,
+                'variations': [
+                    {'color': 'Black', 'size': None, 'stock_quantity': 75},
+                    {'color': 'Silver', 'size': None, 'stock_quantity': 60}
+                ]
             },
         ]
 
         # Create a placeholder image
         placeholder_path = os.path.join(settings.MEDIA_ROOT, 'products', 'images', 'placeholder.jpg')
+        os.makedirs(os.path.dirname(placeholder_path), exist_ok=True)
         if not os.path.exists(placeholder_path):
             # Create a simple colored image using PIL
             from PIL import Image
@@ -100,10 +133,20 @@ class Command(BaseCommand):
                 defaults={
                     'description': prod_data['description'],
                     'price': prod_data['price'],
-                    'available': True,
                 }
             )
-            
+
+            # Create product variations
+            for var_data in prod_data.get('variations', []):
+                ProductVariation.objects.get_or_create(
+                    product=product,
+                    color=var_data['color'],
+                    size=var_data['size'],
+                    defaults={
+                        'stock_quantity': var_data['stock_quantity']
+                    }
+                )
+
             if created:
                 # Add placeholder image
                 with open(placeholder_path, 'rb') as f:
